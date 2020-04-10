@@ -93,6 +93,13 @@ impl Configuration {
     }
 }
 
+pub fn immediate_neigbours(c: &Configuration) -> Vec<Configuration> {
+    [c.move_up(), c.move_down(), c.move_left(), c.move_right()]
+    .into_iter()
+    .filter_map(|opt| *opt)
+    .collect()
+}
+
 impl std::ops::Index<usize> for Configuration {
     type Output = [u8; 3];
 
@@ -234,5 +241,23 @@ mod tests {
             [4,  8,      5],
             [3,  6,      7],
         ]).unwrap());
+    }
+
+    #[test]
+    fn immediate_neighbours() {
+        let config = Configuration::new([
+            [1,  2,      8],
+            [4,  BLANK,  5],
+            [3,  6,      7],
+        ]).unwrap();
+        
+        let neighbours = immediate_neigbours(&config);
+
+        assert_eq!(neighbours, vec![
+            config.move_up().unwrap(),
+            config.move_down().unwrap(),
+            config.move_left().unwrap(),
+            config.move_right().unwrap(),
+        ]);
     }
 }
