@@ -93,7 +93,7 @@ impl Configuration {
     }
 }
 
-pub fn immediate_neigbours(c: &Configuration) -> Vec<Configuration> {
+pub fn immediate_neighbours(c: &Configuration) -> Vec<Configuration> {
     [c.move_up(), c.move_down(), c.move_left(), c.move_right()]
     .into_iter()
     .filter_map(|opt| *opt)
@@ -244,14 +244,14 @@ mod tests {
     }
 
     #[test]
-    fn immediate_neighbours() {
+    fn immediate_neighbours_with_blank_at_the_center() {
         let config = Configuration::new([
             [1,  2,      8],
             [4,  BLANK,  5],
             [3,  6,      7],
         ]).unwrap();
         
-        let neighbours = immediate_neigbours(&config);
+        let neighbours = immediate_neighbours(&config);
 
         assert_eq!(neighbours, vec![
             config.move_up().unwrap(),
