@@ -3,8 +3,8 @@ use std::hash::{
     Hasher,
 };
 use crate::{
-    configuration::{
-        Configuration,
+    state::{
+        State,
     },
 };
 
@@ -13,16 +13,16 @@ pub struct Node<'a> {
     pub g: u32,
     pub f: u32,
     pub parent: Option<&'a Node<'a>>,
-    pub state: Configuration,
+    pub state: State,
 }
 
 impl<'a> Node<'a> {
-    pub fn new<'b>(g: u32, h: u32, parent: Option<&'b Node<'b>>, config: &Configuration) -> Node<'b> {
+    pub fn new<'b>(g: u32, h: u32, parent: Option<&'b Node<'b>>, state: &State) -> Node<'b> {
         Node {
             g,
             f: g + h,
             parent,
-            state: *config,
+            state: *state,
         }
     }
 }

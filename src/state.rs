@@ -5,13 +5,13 @@ use std::collections::HashSet;
 const BLANK: u8 = 9;
 
 #[derive(Copy, Clone, Debug)]
-pub struct Configuration {
+pub struct State {
     grid: [[u8; 3]; 3],
     blank_position: (usize, usize), 
 }
 
-impl Configuration {
-    pub fn new(grid: [[u8; 3]; 3]) -> Option<Configuration> {
+impl State {
+    pub fn new(grid: [[u8; 3]; 3]) -> Option<State> {
         let mut used = HashSet::new();
         let mut blank_position = (0, 0);
         
@@ -19,7 +19,7 @@ impl Configuration {
             for j in 0..3 {
                 let x = grid[i][j];
 
-                if !Configuration::is_valid_cell_value(x) || used.contains(&x) {
+                if !State::is_valid_cell_value(x) || used.contains(&x) {
                     return None;
                 }
                 else if x == BLANK {
@@ -30,7 +30,7 @@ impl Configuration {
             }
         }
         
-        Some(Configuration{
+        Some(State{
             grid,
             blank_position,
         })
@@ -40,7 +40,7 @@ impl Configuration {
         x == BLANK || x < 9 
     }
 
-    pub fn move_up(&self) -> Option<Configuration> {
+    pub fn move_up(&self) -> Option<State> {
         let (i, j) = self.blank_position;
         if i > 0 {
             let mut result = *self;
@@ -54,7 +54,7 @@ impl Configuration {
         }
     }
 
-    pub fn move_down(&self) -> Option<Configuration> {
+    pub fn move_down(&self) -> Option<State> {
         let (i, j) = self.blank_position;
         if i < 2 {
             let mut result = *self;
@@ -68,7 +68,7 @@ impl Configuration {
         }
     }
 
-    pub fn move_left(&self) -> Option<Configuration> {
+    pub fn move_left(&self) -> Option<State> {
         let (i, j) = self.blank_position;
         if j > 0 {
             let mut result = *self;
@@ -80,7 +80,7 @@ impl Configuration {
         }
     }
 
-    pub fn move_right(&self) -> Option<Configuration> {
+    pub fn move_right(&self) -> Option<State> {
         let (i, j) = self.blank_position;
         if j < 2 {
             let mut result = *self;
@@ -93,14 +93,14 @@ impl Configuration {
     }
 }
 
-pub fn immediate_neighbours(c: &Configuration) -> Vec<Configuration> {
+pub fn immediate_neighbours(c: &State) -> Vec<State> {
     [c.move_up(), c.move_down(), c.move_left(), c.move_right()]
     .into_iter()
     .filter_map(|opt| *opt)
     .collect()
 }
 
-impl std::ops::Index<usize> for Configuration {
+impl std::ops::Index<usize> for State {
     type Output = [u8; 3];
 
     fn index(&self, i: usize) -> &Self::Output {
@@ -108,13 +108,13 @@ impl std::ops::Index<usize> for Configuration {
     }
 }
 
-impl std::ops::IndexMut<usize> for Configuration {
+impl std::ops::IndexMut<usize> for State {
     fn index_mut(&mut self, i: usize) -> &mut Self::Output {
         &mut self.grid[i]
     }
 }
 
-impl PartialEq for Configuration {
+impl PartialEq for State {
     fn eq(&self, other: &Self) -> bool {
         for i in 0..3 {
             for j in 0..3 {
@@ -128,7 +128,7 @@ impl PartialEq for Configuration {
     }
 }
 
-impl Eq for Configuration {}
+impl Eq for State {}
 
 fn swap<T>(x: &mut [T], i: usize, j: usize) {
     let (lo, hi) = match i.cmp(&j) {
@@ -146,51 +146,51 @@ mod tests {
 
     #[test]
     fn configs_allow_no_duplicates() {
-        let config = Configuration::new([
+        let state = State::new([
                 [1,     2,   3],
                 [1,     4,   5],
                 [BLANK, 6,   7],
         ]);
-        assert!(config.is_none());
+        assert!(state.is_none());
     }
 
     #[test]
     fn configs_validate_the_values() {
-        let config = Configuration::new([
+        let state = State::new([
                 [1,     2,   10],
                 [1,     4,   5],
                 [BLANK, 6,   7],
         ]);
-        assert!(config.is_none());
+        assert!(state.is_none());
     }
 
     #[test]
     fn valid_config_is_some() {
-        let config = Configuration::new([
+        let state = State::new([
                 [1,     2,   3],
                 [4,     8,   5],
                 [BLANK, 6,   7],
         ]);
-        assert!(config.is_some());
+        assert!(state.is_some());
     }
 
     #[test]
     fn move_up_and_right_valid() {
-        let config = Configuration::new([
+        let state = State::new([
                 [1,     2,   3],
                 [4,     8,   5],
                 [BLANK, 6,   7],
         ]).unwrap();
 
-        assert_eq!(config.move_up().unwrap(),
-        Configuration::new([
+        assert_eq!(state.move_up().unwrap(),
+        State::new([
                 [1,     2,   3],
                 [BLANK, 8,   5],
                 [4,     6,   7],
         ]).unwrap());
 
-        assert_eq!(config.move_right().unwrap(),
-        Configuration::new([
+        assert_eq!(state.move_right().unwrap(),
+        State::new([
                [1,  2,     3],
                [4,  8,     5],
                [6,  BLANK, 7],
@@ -199,44 +199,44 @@ mod tests {
 
     #[test]
     fn move_up_and_right_invalid() {
-        let config = Configuration::new([
+        let state = State::new([
                 [1,     2,   BLANK],
                 [4,     8,       5],
                 [3,     6,       7],
         ]).unwrap();
 
-        assert!(config.move_up().is_none());
-        assert!(config.move_right().is_none());
+        assert!(state.move_up().is_none());
+        assert!(state.move_right().is_none());
     }
     
     #[test]
     fn move_down_and_left_invalid() {
-        let config = Configuration::new([
+        let state = State::new([
                 [1,     2,   3],
                 [4,     8,   5],
                 [BLANK, 6,   7],
         ]).unwrap();
 
-        assert!(config.move_down().is_none());
-        assert!(config.move_left().is_none());
+        assert!(state.move_down().is_none());
+        assert!(state.move_left().is_none());
     }
 
     #[test]
     fn move_down_and_left_valid() {
-        let config = Configuration::new([
+        let state = State::new([
                 [1,  2,  BLANK],
                 [4,  8,      5],
                 [3,  6,      7],
         ]).unwrap();
 
-        assert_eq!(config.move_down().unwrap(),
-        Configuration::new([
+        assert_eq!(state.move_down().unwrap(),
+        State::new([
             [1,  2,      5],
             [4,  8,  BLANK],
             [3,  6,      7],
         ]).unwrap());
-        assert_eq!(config.move_left().unwrap(),
-        Configuration::new([
+        assert_eq!(state.move_left().unwrap(),
+        State::new([
             [1,  BLANK,  2],
             [4,  8,      5],
             [3,  6,      7],
@@ -245,19 +245,19 @@ mod tests {
 
     #[test]
     fn immediate_neighbours_with_blank_at_the_center() {
-        let config = Configuration::new([
+        let state = State::new([
             [1,  2,      8],
             [4,  BLANK,  5],
             [3,  6,      7],
         ]).unwrap();
         
-        let neighbours = immediate_neighbours(&config);
+        let neighbours = immediate_neighbours(&state);
 
         assert_eq!(neighbours, vec![
-            config.move_up().unwrap(),
-            config.move_down().unwrap(),
-            config.move_left().unwrap(),
-            config.move_right().unwrap(),
+            state.move_up().unwrap(),
+            state.move_down().unwrap(),
+            state.move_left().unwrap(),
+            state.move_right().unwrap(),
         ]);
     }
 }
