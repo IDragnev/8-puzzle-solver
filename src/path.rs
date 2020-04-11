@@ -8,7 +8,7 @@ pub struct Path {
 }
 
 impl Path {
-    fn from<'a>(_: &Node<'a>) -> Path {
+    pub fn from<'a>(_: &Node<'a>) -> Path {
         Path{}
     }
 }

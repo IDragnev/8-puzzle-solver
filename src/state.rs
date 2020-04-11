@@ -1,8 +1,12 @@
+use std::hash::{
+    Hash, 
+    Hasher,
+};
 use std::cmp::Ordering;
 use std::mem;
 use std::collections::HashSet;
 
-const BLANK: u8 = 9;
+pub const BLANK: u8 = 9;
 
 #[derive(Copy, Clone, Debug)]
 pub struct State {
@@ -129,6 +133,15 @@ impl PartialEq for State {
 }
 
 impl Eq for State {}
+
+impl Hash for State {
+    fn hash<H: Hasher>(&self, hasher: &mut H) {
+        for i in 0..3 {
+            let s: u8 = self.grid[i].iter().sum();
+            s.hash(hasher); 
+        }
+    }
+}
 
 fn swap<T>(x: &mut [T], i: usize, j: usize) {
     let (lo, hi) = match i.cmp(&j) {
