@@ -5,17 +5,18 @@ use crate::{
     },
 };
 use std::cmp::Ordering;
+use std::rc::Rc;
 
-#[derive(Copy, Clone, Debug)]
-pub struct Node<'a> {
-    pub g: u32,
-    pub f: u32,
-    pub parent: Option<&'a Node<'a>>,
+#[derive(Clone, Debug)]
+pub struct Node {
+    pub g: u64,
+    pub f: u64,
+    pub parent: Option<Rc<Node>>,
     pub state: State,
 }
 
-impl<'a> Node<'a> {
-    pub fn new<'b>(g: u32, h: u32, parent: Option<&'b Node<'b>>, state: &State) -> Node<'b> {
+impl Node {
+    pub fn new(g: u64, h: u64, parent: Option<Rc<Node>>, state: &State) -> Node {
         Node {
             g,
             f: g + h,
@@ -25,22 +26,22 @@ impl<'a> Node<'a> {
     }
 }
 
-impl<'a> PartialEq for Node<'a> {
+impl PartialEq for Node {
     fn eq(&self, other: &Self) -> bool {
         self.f == other.f
     }
 }
 
-impl<'a> Eq for Node<'a> {}
+impl Eq for Node {}
 
-impl<'a> PartialOrd for Node<'a> {
-    fn partial_cmp(&self, other: &Node<'a>) -> Option<Ordering> {
+impl PartialOrd for Node {
+    fn partial_cmp(&self, other: &Node) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<'a> Ord for Node<'a> {
-    fn cmp(&self, other: &Node<'a>) -> Ordering {
+impl Ord for Node {
+    fn cmp(&self, other: &Node) -> Ordering {
         self.f.cmp(&other.f)
     }
 }
@@ -51,10 +52,11 @@ mod tests {
 
     #[test]
     fn nodes_are_compared_by_their_f_value() {
+        use state::BLANK;
         let s = State::new([
-            [1, 2, 3],
-            [4, 5, state::BLANK],
-            [7, 6, 8]
+            [1, 2,      3],
+            [4, 5,  BLANK],
+            [7, 6,      8]
         ]).unwrap();
 
         let n0 = Node::new(0, 1, None, &s);

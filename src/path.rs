@@ -4,11 +4,12 @@ use crate::{
     },
 };
 
+#[derive(Debug)]
 pub struct Path {    
 }
 
 impl Path {
-    pub fn from<'a>(_: &Node<'a>) -> Path {
+    pub fn from(_: &Node) -> Path {
         Path{}
     }
 }
