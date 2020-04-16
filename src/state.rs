@@ -14,6 +14,12 @@ pub struct State {
     blank_position: (usize, usize), 
 }
 
+pub struct StateIterator<'a> {
+    grid: &'a[[u8; 3]; 3],
+    row: usize,
+    col: usize,
+}
+
 impl State {
     pub fn new(grid: [[u8; 3]; 3]) -> Option<State> {
         let mut used = HashSet::new();
@@ -43,6 +49,14 @@ impl State {
     fn is_valid_cell_value(x: u8) -> bool {
         x == BLANK || x < 9 
     }
+
+    pub fn iter(&self) -> StateIterator {
+        StateIterator {
+            grid: &self.grid,
+            row: 0,
+            col: 0,
+        }
+    } 
 
     pub fn move_up(&self) -> Option<State> {
         let (i, j) = self.blank_position;
@@ -140,6 +154,27 @@ impl Hash for State {
             let s: u8 = self.grid[i].iter().sum();
             s.hash(hasher); 
         }
+    }
+}
+
+impl<'a> std::iter::Iterator for StateIterator<'a> {
+    type Item = u8;
+    
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.row > 2 {
+            return None;
+        }
+        
+        let result = Some(self.grid[self.row][self.col]);
+
+        let (i, j) = {
+            let col = self.col + 1;
+            if col > 2 { (self.row + 1, 0) } else { (self.row, col) }
+        };
+        self.row = i;
+        self.col = j;
+
+        result
     }
 }
 
@@ -272,5 +307,18 @@ mod tests {
             state.move_left().unwrap(),
             state.move_right().unwrap(),
         ]);
+    }
+
+    #[test]
+    fn iterating_states() {
+        let state = State::new([
+            [1,  2,      8],
+            [4,  BLANK,  5],
+            [3,  6,      7],
+        ]).unwrap();
+        
+        let tiles = state.iter().collect::<Vec<u8>>();
+        
+        assert_eq!(tiles, vec![1, 2, 8, 4, BLANK, 5, 3, 6, 7]);
     }
 }
