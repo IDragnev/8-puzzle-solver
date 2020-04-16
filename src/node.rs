@@ -1,6 +1,5 @@
 use crate::{
     state::{
-        self,
         State,
     },
 };
@@ -52,7 +51,7 @@ mod tests {
 
     #[test]
     fn nodes_are_compared_by_their_f_value() {
-        use state::BLANK;
+        use crate::state::BLANK;
         let s = State::new([
             [1, 2,      3],
             [4, 5,  BLANK],
