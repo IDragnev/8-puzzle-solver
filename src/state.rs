@@ -97,8 +97,8 @@ impl State {
     }
 }
 
-pub fn immediate_neighbours(c: &State) -> Vec<State> {
-    [c.move_up(), c.move_down(), c.move_left(), c.move_right()]
+pub fn immediate_neighbours(s: &State) -> Vec<State> {
+    [s.move_up(), s.move_down(), s.move_left(), s.move_right()]
     .into_iter()
     .filter_map(|opt| *opt)
     .collect()
@@ -158,7 +158,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn configs_allow_no_duplicates() {
+    fn states_allow_no_duplicates() {
         let state = State::new([
                 [1,     2,   3],
                 [1,     4,   5],
@@ -168,7 +168,7 @@ mod tests {
     }
 
     #[test]
-    fn configs_validate_the_values() {
+    fn states_validate_the_values() {
         let state = State::new([
                 [1,     2,   10],
                 [1,     4,   5],
@@ -178,7 +178,7 @@ mod tests {
     }
 
     #[test]
-    fn valid_config_is_some() {
+    fn valid_state_is_some() {
         let state = State::new([
                 [1,     2,   3],
                 [4,     8,   5],
