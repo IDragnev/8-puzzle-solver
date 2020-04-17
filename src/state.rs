@@ -191,8 +191,14 @@ fn swap<T>(x: &mut [T], i: usize, j: usize) {
 
 impl fmt::Display for State {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        use std::char;
+        let to_char = |n| if n != BLANK { char::from_digit(n as u32, 10).unwrap() } else { ' ' };
         for i in 0..3 {
-            let _ = writeln!(f, "[{}, {}, {}]", self.grid[i][0], self.grid[i][1], self.grid[i][2])?;
+            let _ = writeln!(f, "[{} {} {}]", 
+                to_char(self.grid[i][0]), 
+                to_char(self.grid[i][1]), 
+                to_char(self.grid[i][2])
+            )?;
         }
 
         fmt::Result::Ok(())

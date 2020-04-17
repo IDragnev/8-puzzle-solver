@@ -45,12 +45,7 @@ where Heuristic : Fn(&State, &State) -> u64 {
 }
 
 fn start_node(s: &State, h: u64) -> Node {
-    Node {
-        g: 0,
-        f: h,
-        parent: None,
-        state: *s
-    }
+    Node::new(0, h, None, s)
 }
 
 fn generate_successors<H>(node: &Node, goal: &State, h: &H) -> Vec<Node> 
@@ -58,13 +53,12 @@ where H : Fn(&State, &State) -> u64 {
     immediate_neighbours(&node.state)
     .into_iter()
     .map(move |state| {
-        let g = node.g + 1;
-        Node {
-            g,
-            f: g + h(&state, goal),
-            parent: Some(Rc::new(node.clone())),
-            state,
-        }
+        Node::new(
+            node.g + 1,
+            h(&state, goal),
+            Some(Rc::new(node.clone())),
+            &state
+        )
     })
     .collect()
 }
