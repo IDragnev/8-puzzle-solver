@@ -15,32 +15,27 @@ pub fn search<Heuristic>(start: &State, goal: &State, h: &Heuristic) -> Option<P
 where Heuristic : Fn(&State, &State) -> u64 {
     let start_node = start_node(start, h(start, goal));
     let start_f = start_node.f;
-    let mut frontier = [(start_node, Reverse(start_f))].iter().cloned().collect::<PriorityQueue<_, Reverse<u64>>>();
+    let mut frontier = [(start_node, Reverse(start_f))].iter().cloned().collect::<PriorityQueue<_, _>>();
     let mut visited_states = HashSet::new();
     
     while let Some((node, _)) = frontier.pop() {
-        println!("popped node = {:?}", node);
         if node.state == *goal {
             return Some(Path::from(&node));
         }
         
         visited_states.insert(node.state); 
 
-        for succ in generate_successors(&node, goal, h).into_iter()
-                    .filter(|s| !visited_states.contains(&s.state)) {
-            println!("successor i = {:?}", succ);
-            if let None = frontier.get(&succ) {
-                println!("inserted in frontier...");
-                let f = succ.f;
-                frontier.push(succ, Reverse(f));
+        for successor in generate_successors(&node, goal, h).into_iter()
+                         .filter(|s| !visited_states.contains(&s.state)) {
+            if let None = frontier.get(&successor) {
+                let f = Reverse(successor.f);
+                frontier.push(successor, f);
             }
             else {
-                println!("not inserted - KEY UPDATE??");
-                let current_f = frontier.get_priority(&succ).unwrap();
-                println!("succ.f = {:?}; currenf_f = {:?}", Reverse(succ.f), current_f);
-                if Reverse(succ.f) > *current_f {
-                    println!("got in if");
-                    frontier.change_priority(&succ, Reverse(succ.f));
+                let current_f = frontier.get_priority(&successor).unwrap();
+                let successor_f = Reverse(successor.f);
+                if successor_f > *current_f {
+                    frontier.change_priority(&successor, successor_f);
                 }
             }
         }
@@ -122,6 +117,24 @@ mod tests {
             [4,  5,      3],
             [6,  7,      8],
         ]).unwrap(); 
+
+        assert!(search(&state, &goal, &num_misplaced_tiles).is_some());
+    }
+
+    #[test]
+    fn long_paths_are_found() {
+        use crate::heuristics::num_misplaced_tiles;
+
+        let goal = State::new([
+            [1,  2,      3],
+            [4,  BLANK,  5],
+            [6,  7,      8],
+        ]).unwrap();
+        let state =  State::new([
+            [8,  5,  BLANK],
+            [6,  2,      4],
+            [3,  7,      1],
+        ]).unwrap();
 
         assert!(search(&state, &goal, &num_misplaced_tiles).is_some());
     }

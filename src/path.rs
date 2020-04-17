@@ -2,6 +2,10 @@ use crate::{
     node::{
         Node,
     },
+    state::{
+        self,
+        State,
+    },
 };
 
 #[derive(Debug)]
@@ -16,13 +20,21 @@ impl Path {
         }
     }
     
-    pub fn to_vec(&self) -> Vec<&Node> {
+    pub fn to_vec_nodes(&self) -> Vec<&Node> {
         self
         .rev_iter()
         .collect::<Vec<_>>()
         .iter()
         .rev()
         .map(|&n| n)
+        .collect()
+    }
+
+    pub fn to_vec_states(&self) -> Vec<&State> {
+        self
+        .to_vec_nodes()
+        .iter()
+        .map(|n| &n.state)
         .collect()
     }
 
@@ -58,9 +70,9 @@ impl<'a> std::iter::Iterator for NodeIterator<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::state::*;
     use std::rc::Rc;
-    
+    use state::BLANK;
+
     #[test]
     fn iterating_paths() {
         let state = State::new([
@@ -73,7 +85,7 @@ mod tests {
         let n2 = Node::new(2, 0, Some(Rc::new(n1)), &state);
         let p = Path::from(&n2);
 
-        let nodes = p.to_vec();
+        let nodes = p.to_vec_nodes();
         
         assert!(nodes.len() == 3);
         assert!(nodes[0].g == 0);
