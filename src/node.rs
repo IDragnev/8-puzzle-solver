@@ -3,8 +3,11 @@ use crate::{
         State,
     },
 };
-use std::cmp::Ordering;
 use std::rc::Rc;
+use std::hash::{
+    Hash, 
+    Hasher,
+};
 
 #[derive(Clone, Debug)]
 pub struct Node {
@@ -25,32 +28,26 @@ impl Node {
     }
 }
 
+impl Hash for Node {
+    fn hash<H: Hasher>(&self, hasher: &mut H) {
+        self.state.hash(hasher); 
+    }
+}
+
 impl PartialEq for Node {
     fn eq(&self, other: &Self) -> bool {
-        self.f == other.f
+        self.state == other.state
     }
 }
 
 impl Eq for Node {}
-
-impl PartialOrd for Node {
-    fn partial_cmp(&self, other: &Node) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for Node {
-    fn cmp(&self, other: &Node) -> Ordering {
-        self.f.cmp(&other.f)
-    }
-}
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn nodes_are_compared_by_their_f_value() {
+    fn nodes_are_compared_by_their_states() {
         use crate::state::BLANK;
         let s = State::new([
             [1, 2,      3],
@@ -59,14 +56,9 @@ mod tests {
         ]).unwrap();
 
         let n0 = Node::new(0, 1, None, &s);
-        let n1 = Node::new(1, 1, None, &s);
+        let n1 = Node::new(1, 1, None, &s.move_up().unwrap());
 
         assert!(n0 == n0);
-        assert!(n1 == n1);
         assert!(n0 != n1);
-        assert!(n0 < n1);
-        assert!(n1 > n0);
-        assert!(n0 <= n1);
-        assert!(n1 >= n0);
     }
 }

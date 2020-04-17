@@ -5,6 +5,7 @@ use std::hash::{
 use std::cmp::Ordering;
 use std::mem;
 use std::collections::HashSet;
+use std::fmt;
 
 pub const BLANK: u8 = 9;
 
@@ -186,6 +187,16 @@ fn swap<T>(x: &mut [T], i: usize, j: usize) {
     };
     let (init, tail) = x.split_at_mut(hi);
     mem::swap(&mut init[lo], &mut tail[0]);
+}
+
+impl fmt::Display for State {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        for i in 0..3 {
+            let _ = writeln!(f, "[{}, {}, {}]", self.grid[i][0], self.grid[i][1], self.grid[i][2])?;
+        }
+
+        fmt::Result::Ok(())
+    }
 }
 
 #[cfg(test)]
