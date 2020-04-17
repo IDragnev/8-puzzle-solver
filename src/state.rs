@@ -62,11 +62,11 @@ impl State {
     pub fn move_up(&self) -> Option<State> {
         let (i, j) = self.blank_position;
         if i > 0 {
-            let mut result = *self;
-            let temp = result[i - 1][j];
-            result[i - 1][j] = result[i][j];
-            result[i][j] = temp;
-            Some(result)
+            let mut grid = self.grid;
+            let temp = grid[i - 1][j];
+            grid[i - 1][j] = grid[i][j];
+            grid[i][j] = temp;
+            State::new(grid)
         } 
         else {
             None
@@ -76,11 +76,11 @@ impl State {
     pub fn move_down(&self) -> Option<State> {
         let (i, j) = self.blank_position;
         if i < 2 {
-            let mut result = *self;
-            let temp = result[i + 1][j];
-            result[i + 1][j] = result[i][j];
-            result[i][j] = temp;
-            Some(result)
+            let mut grid = self.grid;
+            let temp = grid[i + 1][j];
+            grid[i + 1][j] = grid[i][j];
+            grid[i][j] = temp;
+            State::new(grid)
         } 
         else {
             None
@@ -90,9 +90,9 @@ impl State {
     pub fn move_left(&self) -> Option<State> {
         let (i, j) = self.blank_position;
         if j > 0 {
-            let mut result = *self;
-            swap(&mut result[i], j - 1, j);
-            Some(result)
+            let mut grid = self.grid;
+            swap(&mut grid[i], j - 1, j);
+            State::new(grid)
         } 
         else {
             None
@@ -102,9 +102,9 @@ impl State {
     pub fn move_right(&self) -> Option<State> {
         let (i, j) = self.blank_position;
         if j < 2 {
-            let mut result = *self;
-            swap(&mut result[i], j, j + 1);
-            Some(result)
+            let mut grid = self.grid;
+            swap(&mut grid[i], j, j + 1);
+            State::new(grid)
         } 
         else {
             None
@@ -301,6 +301,27 @@ mod tests {
             [3,  6,      7],
         ]).unwrap());
     }
+
+    #[test]
+    fn several_moves() {
+        let state = State::new([
+                [1,  2,  BLANK],
+                [4,  8,      5],
+                [3,  6,      7],
+        ]).unwrap();
+
+        assert_eq!(
+            state.move_down().unwrap()
+                 .move_left().unwrap()
+                 .move_down().unwrap(),
+            State::new([
+                [1,  2,      5],
+                [4,  6,      8],
+                [3,  BLANK,  7],
+            ]).unwrap()
+        );
+    }
+
 
     #[test]
     fn immediate_neighbours_with_blank_at_the_center() {
