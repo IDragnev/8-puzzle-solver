@@ -50,13 +50,14 @@ fn start_node(s: &State, h: u64) -> Node {
 
 fn generate_successors<H>(node: &Node, goal: &State, h: &H) -> Vec<Node> 
 where H : Fn(&State, &State) -> u64 {
+    let parent = Rc::new(node.clone());
     immediate_neighbours(&node.state)
     .into_iter()
     .map(move |state| {
         Node::new(
             node.g + 1,
             h(&state, goal),
-            Some(Rc::new(node.clone())),
+            Some(Rc::clone(&parent)),
             &state
         )
     })

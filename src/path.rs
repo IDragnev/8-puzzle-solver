@@ -70,7 +70,7 @@ impl<'a> std::iter::Iterator for NodeIterator<'a> {
 mod tests {
     use super::*;
     use std::rc::Rc;
-    use state::BLANK;
+    use crate::state::BLANK;
 
     #[test]
     fn iterating_paths() {
