@@ -133,4 +133,23 @@ mod tests {
 
         assert!(search(&state, &goal, &num_misplaced_tiles).is_some());
     }
+
+    #[test]
+    fn search_on_a_no_solution_case_returns_none() {
+        use crate::heuristics::num_misplaced_tiles;
+
+        let goal = State::new([
+            [1,  2,      3],
+            [4,  5,      6],
+            [7,  8,  BLANK],
+        ]).unwrap();
+        
+        let state =  State::new([
+            [8,      1,  2],
+            [BLANK,  4,  3],
+            [7,      6,  5],
+        ]).unwrap();
+
+        assert!(search(&state, &goal, &num_misplaced_tiles).is_none());
+    }
 }
