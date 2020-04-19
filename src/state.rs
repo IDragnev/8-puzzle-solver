@@ -22,7 +22,7 @@ pub struct StateIterator<'a> {
 }
 
 impl State {
-    pub fn new(grid: [[u8; 3]; 3]) -> Option<State> {
+    pub fn new(grid: &[[u8; 3]; 3]) -> Option<State> {
         let mut used = HashSet::new();
         let mut blank_position = (0, 0);
         
@@ -42,7 +42,7 @@ impl State {
         }
         
         Some(State{
-            grid,
+            grid: *grid,
             blank_position,
         })
     }
@@ -66,7 +66,7 @@ impl State {
             let temp = grid[i - 1][j];
             grid[i - 1][j] = grid[i][j];
             grid[i][j] = temp;
-            State::new(grid)
+            State::new(&grid)
         } 
         else {
             None
@@ -80,7 +80,7 @@ impl State {
             let temp = grid[i + 1][j];
             grid[i + 1][j] = grid[i][j];
             grid[i][j] = temp;
-            State::new(grid)
+            State::new(&grid)
         } 
         else {
             None
@@ -92,7 +92,7 @@ impl State {
         if j > 0 {
             let mut grid = self.grid;
             swap(&mut grid[i], j - 1, j);
-            State::new(grid)
+            State::new(&grid)
         } 
         else {
             None
@@ -104,7 +104,7 @@ impl State {
         if j < 2 {
             let mut grid = self.grid;
             swap(&mut grid[i], j, j + 1);
-            State::new(grid)
+            State::new(&grid)
         } 
         else {
             None
@@ -211,7 +211,7 @@ mod tests {
 
     #[test]
     fn states_allow_no_duplicates() {
-        let state = State::new([
+        let state = State::new(&[
                 [1,     2,   3],
                 [1,     4,   5],
                 [BLANK, 6,   7],
@@ -221,7 +221,7 @@ mod tests {
 
     #[test]
     fn states_validate_the_values() {
-        let state = State::new([
+        let state = State::new(&[
                 [1,     2,   10],
                 [1,     4,   5],
                 [BLANK, 6,   7],
@@ -231,7 +231,7 @@ mod tests {
 
     #[test]
     fn valid_state_is_some() {
-        let state = State::new([
+        let state = State::new(&[
                 [1,     2,   3],
                 [4,     8,   5],
                 [BLANK, 6,   7],
@@ -241,21 +241,21 @@ mod tests {
 
     #[test]
     fn move_up_and_right_valid() {
-        let state = State::new([
+        let state = State::new(&[
                 [1,     2,   3],
                 [4,     8,   5],
                 [BLANK, 6,   7],
         ]).unwrap();
 
         assert_eq!(state.move_up().unwrap(),
-        State::new([
+        State::new(&[
                 [1,     2,   3],
                 [BLANK, 8,   5],
                 [4,     6,   7],
         ]).unwrap());
 
         assert_eq!(state.move_right().unwrap(),
-        State::new([
+        State::new(&[
                [1,  2,     3],
                [4,  8,     5],
                [6,  BLANK, 7],
@@ -264,7 +264,7 @@ mod tests {
 
     #[test]
     fn move_up_and_right_invalid() {
-        let state = State::new([
+        let state = State::new(&[
                 [1,     2,   BLANK],
                 [4,     8,       5],
                 [3,     6,       7],
@@ -276,7 +276,7 @@ mod tests {
     
     #[test]
     fn move_down_and_left_invalid() {
-        let state = State::new([
+        let state = State::new(&[
                 [1,     2,   3],
                 [4,     8,   5],
                 [BLANK, 6,   7],
@@ -288,20 +288,20 @@ mod tests {
 
     #[test]
     fn move_down_and_left_valid() {
-        let state = State::new([
+        let state = State::new(&[
                 [1,  2,  BLANK],
                 [4,  8,      5],
                 [3,  6,      7],
         ]).unwrap();
 
         assert_eq!(state.move_down().unwrap(),
-        State::new([
+        State::new(&[
             [1,  2,      5],
             [4,  8,  BLANK],
             [3,  6,      7],
         ]).unwrap());
         assert_eq!(state.move_left().unwrap(),
-        State::new([
+        State::new(&[
             [1,  BLANK,  2],
             [4,  8,      5],
             [3,  6,      7],
@@ -310,7 +310,7 @@ mod tests {
 
     #[test]
     fn several_moves() {
-        let state = State::new([
+        let state = State::new(&[
                 [1,  2,  BLANK],
                 [4,  8,      5],
                 [3,  6,      7],
@@ -320,7 +320,7 @@ mod tests {
             state.move_down().unwrap()
                  .move_left().unwrap()
                  .move_down().unwrap(),
-            State::new([
+            State::new(&[
                 [1,  2,      5],
                 [4,  6,      8],
                 [3,  BLANK,  7],
@@ -331,7 +331,7 @@ mod tests {
 
     #[test]
     fn immediate_neighbours_with_blank_at_the_center() {
-        let state = State::new([
+        let state = State::new(&[
             [1,  2,      8],
             [4,  BLANK,  5],
             [3,  6,      7],
@@ -349,7 +349,7 @@ mod tests {
 
     #[test]
     fn iterating_states() {
-        let state = State::new([
+        let state = State::new(&[
             [1,  2,      8],
             [4,  BLANK,  5],
             [3,  6,      7],

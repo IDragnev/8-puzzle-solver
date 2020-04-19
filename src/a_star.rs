@@ -72,7 +72,7 @@ mod tests {
     #[test]
     fn trivial_paths_are_found() {
         let h = |_: &State, _:&State| 1;
-        let s = State::new([
+        let s = State::new(&[
             [1,  2,  BLANK],
             [4,  8,      5],
             [3,  6,      7],
@@ -84,12 +84,12 @@ mod tests {
     fn one_move_away_paths_are_found() {
         use crate::heuristics::num_misplaced_tiles;
 
-        let goal = State::new([
+        let goal = State::new(&[
             [1,  2,      3],
             [4,  BLANK,  5],
             [6,  7,      8],
         ]).unwrap();   
-        let state =  State::new([
+        let state =  State::new(&[
             [1,  2,      3],
             [4,  5,  BLANK],
             [6,  7,      8],
@@ -102,12 +102,12 @@ mod tests {
     fn two_moves_away_paths_are_found() {
         use crate::heuristics::num_misplaced_tiles;
 
-        let goal = State::new([
+        let goal = State::new(&[
             [1,  2,      3],
             [4,  BLANK,  5],
             [6,  7,      8],
         ]).unwrap();   
-        let state =  State::new([
+        let state =  State::new(&[
             [1,  2,  BLANK],
             [4,  5,      3],
             [6,  7,      8],
@@ -120,12 +120,12 @@ mod tests {
     fn long_paths_are_found() {
         use crate::heuristics::num_misplaced_tiles;
 
-        let goal = State::new([
+        let goal = State::new(&[
             [1,  2,      3],
             [4,  BLANK,  5],
             [6,  7,      8],
         ]).unwrap();
-        let state =  State::new([
+        let state =  State::new(&[
             [8,  5,  BLANK],
             [6,  2,      4],
             [3,  7,      1],
@@ -138,13 +138,13 @@ mod tests {
     fn search_on_a_no_solution_case_returns_none() {
         use crate::heuristics::num_misplaced_tiles;
 
-        let goal = State::new([
+        let goal = State::new(&[
             [1,  2,      3],
             [4,  5,      6],
             [7,  8,  BLANK],
         ]).unwrap();
         
-        let state =  State::new([
+        let state =  State::new(&[
             [8,      1,  2],
             [BLANK,  4,  3],
             [7,      6,  5],

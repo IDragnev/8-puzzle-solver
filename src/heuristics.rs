@@ -20,12 +20,12 @@ mod tests {
 
     #[test]
     fn num_misplaced_tiles_is_correct() {
-        let goal = State::new([
+        let goal = State::new(&[
             [1,  2,      3],
             [4,  BLANK,  5],
             [6,  7,      8],
         ]).unwrap();   
-        let state =  State::new([
+        let state =  State::new(&[
             [1,  2,  BLANK],
             [4,  8,      5],
             [3,  6,      7],

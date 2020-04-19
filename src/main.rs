@@ -18,13 +18,13 @@ fn print_solution(p: &Path) {
 }
 
 fn main() {
-    let goal = State::new([
+    let goal = State::new(&[
         [1,  2,      3],
         [4,  BLANK,  5],
         [6,  7,      8],
     ]).unwrap();
     
-    let state =  State::new([
+    let state =  State::new(&[
         [8,  5,  BLANK],
         [6,  2,      4],
         [3,  7,      1],

@@ -49,7 +49,7 @@ mod tests {
     #[test]
     fn nodes_are_compared_by_their_states() {
         use crate::state::BLANK;
-        let s = State::new([
+        let s = State::new(&[
             [1, 2,      3],
             [4, 5,  BLANK],
             [7, 6,      8]

@@ -74,7 +74,7 @@ mod tests {
 
     #[test]
     fn iterating_paths() {
-        let state = State::new([
+        let state = State::new(&[
             [1,  2,      8],
             [4,  BLANK,  5],
             [3,  6,      7],
