@@ -169,10 +169,11 @@ impl Eq for State {}
 
 impl Hash for State {
     fn hash<H: Hasher>(&self, hasher: &mut H) {
-        for i in 0..3 {
-            let s: u8 = self.grid[i].iter().sum();
-            s.hash(hasher); 
-        }
+        self
+        .iter()
+        .map(tile_to_char)
+        .collect::<String>()
+        .hash(hasher)
     }
 }
 
@@ -209,18 +210,24 @@ fn swap<T>(x: &mut [T], i: usize, j: usize) {
 
 impl fmt::Display for State {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use std::char;
-        let to_char = |n| if n != BLANK { char::from_digit(n as u32, 10).unwrap() } else { ' ' };
         for i in 0..3 {
             let _ = writeln!(f, "[{} {} {}]", 
-                to_char(self.grid[i][0]), 
-                to_char(self.grid[i][1]), 
-                to_char(self.grid[i][2])
+                tile_to_char(self.grid[i][0]), 
+                tile_to_char(self.grid[i][1]), 
+                tile_to_char(self.grid[i][2])
             )?;
         }
 
         fmt::Result::Ok(())
     }
+}
+
+fn tile_to_char(tile: u8) -> char {
+    use std::char::from_digit;
+    if tile != BLANK { 
+        from_digit(tile as u32, 10).unwrap() 
+    } 
+    else { ' ' }
 }
 
 #[cfg(test)]
