@@ -211,7 +211,7 @@ fn swap<T>(x: &mut [T], i: usize, j: usize) {
 impl fmt::Display for State {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for i in 0..3 {
-            let _ = writeln!(f, "[{} {} {}]", 
+            let _ = writeln!(f, "|{} {} {}|", 
                 tile_to_char(self.grid[i][0]), 
                 tile_to_char(self.grid[i][1]), 
                 tile_to_char(self.grid[i][2])
@@ -248,8 +248,8 @@ mod tests {
     fn states_validate_the_values() {
         let state = State::new(&[
                 [1,     2,   10],
-                [1,     4,   5],
-                [BLANK, 6,   7],
+                [1,     4,    5],
+                [BLANK, 6,    7],
         ]);
         assert!(state.is_none());
     }

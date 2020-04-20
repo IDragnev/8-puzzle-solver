@@ -11,8 +11,8 @@ use std::collections::HashSet;
 use std::cmp::Reverse;
 use std::rc::Rc;
 
-pub fn search<Heuristic>(start: &State, goal: &State, h: &Heuristic) -> Option<Path>
-where Heuristic : Fn(&State, &State) -> u64 {
+pub fn search<H>(start: &State, goal: &State, h: &H) -> Option<Path>
+where H : Fn(&State, &State) -> u64 {
     let start_node = start_node(start, h(start, goal));
     let start_f = start_node.f;
     let mut frontier = [(start_node, Reverse(start_f))].iter().cloned().collect::<PriorityQueue<_, _>>();
