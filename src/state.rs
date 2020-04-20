@@ -62,12 +62,17 @@ impl State {
     pub fn move_up(&self) -> Option<State> {
         let (i, j) = self.blank_position;
         if i > 0 {
-            let mut grid = self.grid;
+            let mut result = *self;
+            let grid = &mut result.grid;
+            
             let temp = grid[i - 1][j];
             grid[i - 1][j] = grid[i][j];
             grid[i][j] = temp;
-            State::new(&grid)
-        } 
+            
+            result.blank_position = (i - 1, j);
+
+            Some(result)
+        }
         else {
             None
         }
@@ -76,11 +81,16 @@ impl State {
     pub fn move_down(&self) -> Option<State> {
         let (i, j) = self.blank_position;
         if i < 2 {
-            let mut grid = self.grid;
+            let mut result = *self;
+            let grid = &mut result.grid;
+
             let temp = grid[i + 1][j];
             grid[i + 1][j] = grid[i][j];
             grid[i][j] = temp;
-            State::new(&grid)
+            
+            result.blank_position = (i + 1, j);
+
+            Some(result)
         } 
         else {
             None
@@ -90,9 +100,13 @@ impl State {
     pub fn move_left(&self) -> Option<State> {
         let (i, j) = self.blank_position;
         if j > 0 {
-            let mut grid = self.grid;
+            let mut result = *self;
+            let grid = &mut result.grid;
+            
             swap(&mut grid[i], j - 1, j);
-            State::new(&grid)
+            result.blank_position = (i, j - 1);
+
+            Some(result)
         } 
         else {
             None
@@ -102,9 +116,13 @@ impl State {
     pub fn move_right(&self) -> Option<State> {
         let (i, j) = self.blank_position;
         if j < 2 {
-            let mut grid = self.grid;
+            let mut result = *self;
+            let grid = &mut result.grid;
+
             swap(&mut grid[i], j, j + 1);
-            State::new(&grid)
+            result.blank_position = (i, j + 1);
+
+            Some(result)
         } 
         else {
             None
@@ -114,7 +132,7 @@ impl State {
 
 pub fn immediate_neighbours(s: &State) -> Vec<State> {
     [s.move_up(), s.move_down(), s.move_left(), s.move_right()]
-    .into_iter()
+    .iter()
     .filter_map(|opt| *opt)
     .collect()
 }
