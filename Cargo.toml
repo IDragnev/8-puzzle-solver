@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 priority-queue = "0.7.0"
+rand = "0.7.3"

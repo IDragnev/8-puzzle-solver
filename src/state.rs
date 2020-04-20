@@ -7,7 +7,14 @@ use std::mem;
 use std::collections::HashSet;
 use std::fmt;
 
-pub const BLANK: u8 = 9;
+pub const BLANK: u8 = 0;
+
+pub fn possible_tiles() -> HashSet<u8> {
+    let mut tiles = (1..9).collect::<HashSet<_>>();
+    tiles.insert(BLANK);
+    
+    tiles
+}
 
 #[derive(Copy, Clone, Debug)]
 pub struct State {

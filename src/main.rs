@@ -9,6 +9,19 @@ use state::{
     BLANK,
 };
 use path::Path;
+use rand::Rng;
+
+fn eight_puzzle_solver(start: &State, goal: &State) {
+    println!("Start state:\n{}", start);
+    println!("Goal state: \n{}", goal);
+
+    if let Some(path) = a_star::search(&start, &goal, &heuristics::num_misplaced_tiles) {
+        print_solution(&path);
+    }
+    else {
+        println!("No solution found!");
+    }
+}
 
 fn print_solution(p: &Path) {
     println!("Solution:");
@@ -17,23 +30,29 @@ fn print_solution(p: &Path) {
     }
 }
 
+fn generate_random_state() -> State {
+    let mut tiles = state::possible_tiles().into_iter().collect::<Vec<_>>();
+    let mut grid = [[0; 3]; 3];
+
+    for i in 0..3 {
+        for j in 0..3 {
+            let k = rand::thread_rng().gen_range(0, tiles.len());
+            grid[i][j] = tiles[k];
+            tiles.remove(k);
+        }
+    }
+
+    State::new(&grid).unwrap()
+}
+
 fn main() {
     let goal = State::new(&[
         [1,  2,      3],
-        [4,  BLANK,  5],
-        [6,  7,      8],
+        [4,  5,      6],
+        [7,  8,  BLANK],
     ]).unwrap();
     
-    let state =  State::new(&[
-        [8,  5,  BLANK],
-        [6,  2,      4],
-        [3,  7,      1],
-    ]).unwrap();
+    let start = generate_random_state();
     
-    if let Some(path) = a_star::search(&state, &goal, &heuristics::num_misplaced_tiles) {
-        print_solution(&path);
-    }
-    else {
-        println!("No solution found!");
-    }
+    eight_puzzle_solver(&start, &goal);
 }
